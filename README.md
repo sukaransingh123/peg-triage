@@ -29,6 +29,8 @@ Install locally from the project folder if you want the `peg-triage` command ava
 python3 -m pip install .
 ```
 
+The ZIP also includes a prebuilt, dependency-free Python wheel for Python 3.10+: `release/peg_triage-1.1.0-py3-none-any.whl`. You can install it with `python3 -m pip install release/peg_triage-1.1.0-py3-none-any.whl`, then run `python3 -m peg_triage --demo`.
+
 ## Run the synthetic demo
 
 macOS / Linux:
@@ -111,11 +113,13 @@ A pre-generated dashboard using the fabricated demonstration case is included at
 ```text
 peg-triage/
 ├── peg_triage/             # Python implementation
+│   └── data/               # packaged synthetic demo inputs
 ├── docs/METHODOLOGY.md     # architecture, scoring, scope, and limitations
 ├── tests/                  # standard-library automated checks
 ├── examples/synthetic_case # fabricated demo records and IOC set
 ├── examples/demo-output    # pre-generated, fabricated report preview
 ├── pyproject.toml          # installable Python package metadata
+├── release/                # prebuilt, dependency-free Python wheel
 ├── peg-triage               # executable Python launcher
 ├── run.sh                   # macOS/Linux launcher
 ├── run.bat                  # Windows launcher

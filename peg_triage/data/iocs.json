@@ -1,0 +1,11 @@
+{
+  "process": [
+    {"value": "com.example.pegasus_demo", "name": "Synthetic process IOC (training only)"}
+  ],
+  "domain": [
+    {"value": "install-demo.invalid", "name": "Synthetic domain IOC (.invalid reserved domain)"}
+  ],
+  "path": [
+    {"value": "/private/var/db/pegasus_demo/worker", "name": "Synthetic shutdown path (training only)"}
+  ]
+}

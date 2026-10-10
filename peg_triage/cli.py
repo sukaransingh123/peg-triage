@@ -252,7 +252,7 @@ def write_outputs(out: Path, evidence_dir: Path, records, hashes, score, verdict
 def make_demo(out: Path):
     demo = out / "peg-triage-demo"
     demo.mkdir(parents=True, exist_ok=True)
-    sample = Path(__file__).resolve().parent.parent / "examples" / "synthetic_case"
+    sample = Path(__file__).resolve().parent / "data"
     for filename in ("events.csv", "README.md"):
         (demo / filename).write_bytes((sample / filename).read_bytes())
     return demo
@@ -275,7 +275,7 @@ def main(argv=None):
         records, hashes = read_records(evidence)
         ioc_path = args.iocs
         if args.demo and ioc_path is None:
-            ioc_path = Path(__file__).resolve().parent.parent / "examples" / "synthetic_case" / "iocs.json"
+            ioc_path = Path(__file__).resolve().parent / "data" / "iocs.json"
         iocs = load_iocs(ioc_path)
         hits, score, verdict, cluster = correlate(records, iocs, max(1, args.window))
         result = write_outputs(args.out, evidence, records, hashes, score, verdict, cluster, max(1, args.window))

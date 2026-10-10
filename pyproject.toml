@@ -25,3 +25,6 @@ peg-triage = "peg_triage.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["peg_triage*"]
+
+[tool.setuptools.package-data]
+peg_triage = ["data/*"]

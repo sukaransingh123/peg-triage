@@ -1,0 +1,4 @@
+timestamp,source,signal_type,value,detail
+2026-01-15T10:15:00Z,netusage.json,process,com.example.pegasus_demo,synthetic demonstration process event
+2026-01-15T10:15:35Z,cache_files.json,domain,https://install-demo.invalid/bootstrap,synthetic demonstration URL event
+2026-01-15T10:16:00Z,shutdown_log.json,shutdown,/private/var/db/pegasus_demo/worker,synthetic sticky-process entry
