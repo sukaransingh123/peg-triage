@@ -1,6 +1,6 @@
 # PEG-TRIAGE
 
-**Pegasus and Mercenary-Spyware Triage** is a small, offline Python command-line project based on the proposed framework in the accompanying digital-forensics case study. It hashes supplied acquisition/export files, normalizes selected records, checks them against analyst-supplied indicators, correlates findings in time, and writes an explainable Markdown, JSON, and CSV report.
+**Pegasus and Mercenary-Spyware Triage** is an offline forensic triage application based on the proposed framework in the accompanying case study. It hashes supplied acquisition/export files, normalizes selected records, checks them against analyst-supplied indicators, correlates findings in time, and creates an interactive, self-contained HTML dashboard alongside Markdown, JSON, and CSV reports.
 
 **GitHub repository:** https://github.com/sukaransingh123/peg-triage
 
@@ -12,6 +12,8 @@
 - Applies the case-study weights: process/domain match 40, shutdown anomaly 25, explicitly labeled unknown-binary network egress 20, and profile/crash context 10.
 - Applies a 1.5 multiplier when distinct signal types occur inside the configured window; reports High at 60+, Medium at 30-59, and Low below 30.
 - Produces a sorted timeline and records the reason and source file for every scored finding.
+- Generates a responsive offline dashboard with a filterable timeline, score breakdown, evidence hashes, and JSON download.
+- Includes a standard-library automated test suite and a fabricated demonstration case.
 
 This project is a transparent student reference implementation, not a validated Pegasus detector. It does not access a phone, acquire/decrypt a backup, execute MVT or iShutdown, or establish infection from a score. It analyzes files supplied by the examiner. **Low means no corroborated indicators were found in the supplied records; it does not mean the device is clean.** A high score is a triage signal for manual expert review, not an attribution or forensic conclusion.
 
@@ -20,6 +22,12 @@ This project is a transparent student reference implementation, not a validated 
 - Python 3.10 or newer
 - No third-party Python packages
 - Optional: [MVT](https://docs.mvt.re/) for producing forensic exports from an authorized acquisition
+
+Install locally from the project folder if you want the `peg-triage` command available on your Python environment:
+
+```sh
+python3 -m pip install .
+```
 
 ## Run the synthetic demo
 
@@ -38,7 +46,7 @@ cd peg-triage
 run.bat --demo
 ```
 
-The demo uses only fabricated data. It writes `report.md`, `report.json`, and `timeline.csv` under `peg-triage-results/`.
+The demo uses only fabricated data. It writes `report.html`, `report.md`, `report.json`, and `timeline.csv` under `peg-triage-results/`. Open `report.html` in any modern browser for the interactive dashboard. The report is a single file and works offline.
 
 ## Analyze acquired/exported evidence
 
@@ -94,18 +102,27 @@ Create a CSV containing `path,sha256` entries relative to the evidence directory
 - `report.md`: readable summary, finding explanations, and input hashes.
 - `report.json`: structured report, full sorted timeline, and evidence log.
 - `timeline.csv`: tabular timeline.
+- `report.html`: responsive interactive dashboard; timeline search, score composition, hash ledger, and one-click JSON download.
+
+A pre-generated dashboard using the fabricated demonstration case is included at [`examples/demo-output/report.html`](examples/demo-output/report.html) so reviewers can inspect the report design before installing or running anything.
 
 ## Project layout
 
 ```text
 peg-triage/
 ├── peg_triage/             # Python implementation
+├── docs/METHODOLOGY.md     # architecture, scoring, scope, and limitations
+├── tests/                  # standard-library automated checks
 ├── examples/synthetic_case # fabricated demo records and IOC set
+├── examples/demo-output    # pre-generated, fabricated report preview
+├── pyproject.toml          # installable Python package metadata
 ├── peg-triage               # executable Python launcher
 ├── run.sh                   # macOS/Linux launcher
 ├── run.bat                  # Windows launcher
 └── README.md
 ```
+
+Run the automated checks from the project folder with `python3 -m unittest discover -s tests -v`.
 
 ## Research basis
 

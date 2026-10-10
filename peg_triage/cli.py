@@ -9,6 +9,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from . import __version__
+from .dashboard import render_dashboard
 
 WEIGHTS = {"process": 40, "domain": 40, "shutdown": 25, "unknown_network": 20,
            "profile": 10, "crash": 10}
@@ -48,6 +50,14 @@ def first(record: dict[str, Any], *keys: str) -> Any:
         if record.get(key) not in (None, ""):
             return record[key]
     return None
+
+
+def as_bool(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return value != 0
+    return str(value or "").strip().lower() in {"1", "true", "yes", "y", "sticky", "anomalous"}
 
 
 def flatten_json(obj: Any):
@@ -127,7 +137,7 @@ def read_records(evidence_dir: Path):
                 records.append({"source": rel, "signal_type": signal, "value": str(value),
                                 "timestamp": parse_time(first(raw, "timestamp", "time", "date", "event_time")),
                                 "detail": str(first(raw, "detail", "description", "raw") or ""),
-                                "sticky": bool(raw.get("sticky", False)), "raw": raw})
+                                "sticky": as_bool(raw.get("sticky", False)), "raw": raw})
         except (OSError, UnicodeError, json.JSONDecodeError, csv.Error) as exc:
             raise ValueError(f"Could not parse {rel}: {exc}") from exc
     return records, hashes
@@ -220,7 +230,7 @@ def write_outputs(out: Path, evidence_dir: Path, records, hashes, score, verdict
     out.mkdir(parents=True, exist_ok=True)
     timeline = sorted(records, key=lambda r: r["timestamp"] or "")
     evidence_log = [{k: h.get(k) for k in ("source", "timestamp", "signal_type", "value", "weight", "reason", "detail")} for h in records if h["weight"]]
-    result = {"tool": "PEG-TRIAGE", "version": "1.0.0", "generated_utc": datetime.now(timezone.utc).isoformat(),
+    result = {"tool": "PEG-TRIAGE", "version": __version__, "generated_utc": datetime.now(timezone.utc).isoformat(),
               "evidence_directory": evidence_dir.name, "score": score, "verdict": verdict,
               "temporal_cluster": cluster, "cluster_window_seconds": window_seconds,
               "interpretation": "Triage aid only. Low means no corroborated indicators in supplied artifacts; it does not establish a clean device.",
@@ -235,6 +245,7 @@ def write_outputs(out: Path, evidence_dir: Path, records, hashes, score, verdict
     rows = "\n".join(f"| {e['timestamp'] or 'Unknown'} | {e['signal_type']} | `{e['value']}` | {e['weight']} | {e['source']} | {e['reason']} |" for e in evidence_log) or "| - | - | - | 0 | - | No scored indicators |"
     md = f"""# PEG-TRIAGE Analysis Report\n\n- **Generated (UTC):** {result['generated_utc']}\n- **Score:** {score}\n- **Triage verdict:** {verdict}\n- **Temporal cluster:** {'yes' if cluster else 'no'} (window {window_seconds}s)\n- **Evidence files hashed:** {len(hashes)}\n\n> {result['interpretation']}\n\n## Scored evidence\n\n| Timestamp | Signal | Value | Points | Source artifact | Reason |\n|---|---|---|---:|---|---|\n{rows}\n\n## Input integrity\n\n| Relative path | SHA-256 | Bytes |\n|---|---|---:|\n""" + "\n".join(f"| `{h['path']}` | `{h['sha256']}` | {h['bytes']} |" for h in hashes) + "\n"
     (out / "report.md").write_text(md, encoding="utf-8")
+    (out / "report.html").write_text(render_dashboard(result), encoding="utf-8")
     return result
 
 
@@ -242,8 +253,8 @@ def make_demo(out: Path):
     demo = out / "peg-triage-demo"
     demo.mkdir(parents=True, exist_ok=True)
     sample = Path(__file__).resolve().parent.parent / "examples" / "synthetic_case"
-    import shutil
-    shutil.copytree(sample, demo, dirs_exist_ok=True)
+    for filename in ("events.csv", "README.md"):
+        (demo / filename).write_bytes((sample / filename).read_bytes())
     return demo
 
 
@@ -262,11 +273,14 @@ def main(argv=None):
             parser.error("provide an existing --evidence folder, or use --demo")
         verify_manifest(evidence, args.manifest)
         records, hashes = read_records(evidence)
-        iocs = load_iocs(args.iocs)
+        ioc_path = args.iocs
+        if args.demo and ioc_path is None:
+            ioc_path = Path(__file__).resolve().parent.parent / "examples" / "synthetic_case" / "iocs.json"
+        iocs = load_iocs(ioc_path)
         hits, score, verdict, cluster = correlate(records, iocs, max(1, args.window))
         result = write_outputs(args.out, evidence, records, hashes, score, verdict, cluster, max(1, args.window))
         print(f"PEG-TRIAGE: {verdict} ({score} points); {len(hits)} scored finding(s)")
-        print(f"Report: {(args.out / 'report.md').resolve()}")
+        print(f"Report: {(args.out / 'report.html').resolve()}")
         return 0
     except (ValueError, OSError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)

@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "peg-triage"
+version = "1.1.0"
+description = "Explainable, offline correlation of acquired mobile-forensic artifacts"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "PEG-TRIAGE Student Project" }]
+dependencies = []
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Education",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Security",
+]
+
+[project.scripts]
+peg-triage = "peg_triage.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["peg_triage*"]

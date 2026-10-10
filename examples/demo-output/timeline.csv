@@ -1,0 +1,4 @@
+timestamp,source,signal_type,value,weight,reason,detail
+2026-01-15T10:15:00+00:00,events.csv,process,com.example.pegasus_demo,40,Matched IOC: Synthetic process IOC (training only),synthetic demonstration process event
+2026-01-15T10:15:35+00:00,events.csv,domain,https://install-demo.invalid/bootstrap,40,Matched IOC: Synthetic domain IOC (.invalid reserved domain),synthetic demonstration URL event
+2026-01-15T10:16:00+00:00,events.csv,shutdown,/private/var/db/pegasus_demo/worker,25,Matched IOC: Synthetic shutdown path (training only),synthetic sticky-process entry

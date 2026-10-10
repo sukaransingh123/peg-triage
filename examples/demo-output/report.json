@@ -1,0 +1,81 @@
+{
+  "tool": "PEG-TRIAGE",
+  "version": "1.1.0",
+  "generated_utc": "2026-10-10T09:20:28.342134+00:00",
+  "evidence_directory": "peg-triage-demo",
+  "score": 157.5,
+  "verdict": "High",
+  "temporal_cluster": true,
+  "cluster_window_seconds": 120,
+  "interpretation": "Triage aid only. Low means no corroborated indicators in supplied artifacts; it does not establish a clean device.",
+  "input_hashes": [
+    {
+      "path": "events.csv",
+      "sha256": "355916b332bc0996aa4608a2e2ed6b37c3585da6e825d770e1682be941e118e2",
+      "bytes": 381
+    },
+    {
+      "path": "iocs.json",
+      "sha256": "ef021f900d54d5fff93225d000668722a70ae05e978a437434715b054dade92a",
+      "bytes": 351
+    }
+  ],
+  "timeline": [
+    {
+      "timestamp": "2026-01-15T10:15:00+00:00",
+      "source": "events.csv",
+      "signal_type": "process",
+      "value": "com.example.pegasus_demo",
+      "weight": 40,
+      "reason": "Matched IOC: Synthetic process IOC (training only)",
+      "detail": "synthetic demonstration process event"
+    },
+    {
+      "timestamp": "2026-01-15T10:15:35+00:00",
+      "source": "events.csv",
+      "signal_type": "domain",
+      "value": "https://install-demo.invalid/bootstrap",
+      "weight": 40,
+      "reason": "Matched IOC: Synthetic domain IOC (.invalid reserved domain)",
+      "detail": "synthetic demonstration URL event"
+    },
+    {
+      "timestamp": "2026-01-15T10:16:00+00:00",
+      "source": "events.csv",
+      "signal_type": "shutdown",
+      "value": "/private/var/db/pegasus_demo/worker",
+      "weight": 25,
+      "reason": "Matched IOC: Synthetic shutdown path (training only)",
+      "detail": "synthetic sticky-process entry"
+    }
+  ],
+  "evidence_log": [
+    {
+      "source": "events.csv",
+      "timestamp": "2026-01-15T10:15:00+00:00",
+      "signal_type": "process",
+      "value": "com.example.pegasus_demo",
+      "weight": 40,
+      "reason": "Matched IOC: Synthetic process IOC (training only)",
+      "detail": "synthetic demonstration process event"
+    },
+    {
+      "source": "events.csv",
+      "timestamp": "2026-01-15T10:15:35+00:00",
+      "signal_type": "domain",
+      "value": "https://install-demo.invalid/bootstrap",
+      "weight": 40,
+      "reason": "Matched IOC: Synthetic domain IOC (.invalid reserved domain)",
+      "detail": "synthetic demonstration URL event"
+    },
+    {
+      "source": "events.csv",
+      "timestamp": "2026-01-15T10:16:00+00:00",
+      "signal_type": "shutdown",
+      "value": "/private/var/db/pegasus_demo/worker",
+      "weight": 25,
+      "reason": "Matched IOC: Synthetic shutdown path (training only)",
+      "detail": "synthetic sticky-process entry"
+    }
+  ]
+}
